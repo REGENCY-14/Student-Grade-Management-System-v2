@@ -3,23 +3,35 @@ import java.util.Comparator;
 
 public class GradeManager {
 
+    // Array to store up to 200 grades
     private Grade[] grades = new Grade[200];
-    private int gradeCount = 0;
+    private int gradeCount = 0; // Number of grades currently stored
 
-    // ------------------ Add Grade ------------------
+    // ------------------ ADD GRADE ------------------
+    /**
+     * Adds a new grade to the system.
+     * Updates the student's average after adding the grade.
+     * @param grade Grade object to add
+     */
     public void addGrade(Grade grade) {
         if (gradeCount < grades.length) {
-            grades[gradeCount++] = grade;
-            updateStudentAverage(grade.getStudentId());
+            grades[gradeCount++] = grade; // Add grade and increment count
+            updateStudentAverage(grade.getStudentId()); // Recalculate student's average
         } else {
             System.out.println("Grade storage full!");
         }
     }
 
+    // ------------------ UPDATE STUDENT AVERAGE ------------------
+    /**
+     * Calculates and updates the average grade for a student.
+     * @param studentId ID of the student
+     */
     private void updateStudentAverage(int studentId) {
         double total = 0;
         int count = 0;
 
+        // Sum all grades for the student
         for (int i = 0; i < gradeCount; i++) {
             if (grades[i].getStudentId() == studentId) {
                 total += grades[i].getGrade();
@@ -27,12 +39,19 @@ public class GradeManager {
             }
         }
 
+        // Find student object
         Student s = findStudentById(studentId);
         if (s != null && count > 0) {
-            s.setAverageGrade(total / count);
+            s.setAverageGrade(total / count); // Update student's average
         }
     }
 
+    // ------------------ FIND STUDENT BY ID ------------------
+    /**
+     * Finds a student in the main student list using student ID.
+     * @param studentId ID to search
+     * @return Student object if found, null otherwise
+     */
     private Student findStudentById(int studentId) {
         for (Student s : Main.students) {
             if (s.id == studentId) return s;
@@ -40,12 +59,16 @@ public class GradeManager {
         return null;
     }
 
-
-    // ------------------ View Grades for a Student ------------------
+    // ------------------ VIEW GRADES FOR A STUDENT ------------------
+    /**
+     * Displays all grades for a specific student in reverse chronological order.
+     * Also shows averages for core, elective, and overall grades, plus performance status.
+     * @param studentId ID of the student
+     */
     public void viewGradeByStudent(int studentId) {
         ArrayList<Grade> studentGrades = new ArrayList<>();
 
-        // Collect grades
+        // Collect all grades for this student
         for (int i = 0; i < gradeCount; i++) {
             if (grades[i].getStudentId() == studentId) {
                 studentGrades.add(grades[i]);
@@ -57,32 +80,29 @@ public class GradeManager {
             return;
         }
 
+        // Sort grades by date (latest first)
         studentGrades.sort(Comparator.comparing(Grade::getDate).reversed());
 
+        // Display header
         System.out.println("\n--------- GRADE REPORT FOR STUDENT " + studentId + " ---------");
         System.out.printf("%-8s %-12s %-20s %-10s %-8s\n",
                 "GradeID", "Date", "Subject", "Type", "Grade");
         System.out.println("-------------------------------------------------------------");
 
+        // Print each grade
         for (Grade g : studentGrades) {
-            Student student = findStudentById(g.getStudentId());
-            String status = (student != null) ? student.getStatus() : "N/A";
-
-            System.out.printf("%-8d %-12s %-20s %-10s %-8.2f %-8s\n",
+            System.out.printf("%-8d %-12s %-20s %-10s %-8.2f\n",
                     g.getGradeId(),
                     g.getDate(),
                     g.getSubject().getSubjectName(),
                     g.getSubject().getSubjectType(),
-                    g.getGrade(),
-                    status
+                    g.getGrade()
             );
         }
 
-
-
         System.out.println("-------------------------------------------------------------");
 
-        // Show averages
+        // Calculate and display averages
         double coreAvg = calculateCoreAverage(studentId);
         double electAvg = calculateElectiveAverage(studentId);
         double overallAvg = calculateOverallAverage(studentId);
@@ -96,12 +116,20 @@ public class GradeManager {
         System.out.println("Current Average: " +
                 (overallAvg == -1 ? "N/A" : String.format("%.2f", overallAvg)));
 
-
+        // Show student's performance status
+        Student student = findStudentById(studentId);
+        String status = (student != null) ? student.getStatus() : "N/A";
+        System.out.println("Student Performance Status: " + status);
 
         System.out.println("-------------------------------------------------------------\n");
     }
 
-    // ------------------ Averages ------------------
+    // ------------------ CALCULATE CORE AVERAGE ------------------
+    /**
+     * Calculates average grade for core subjects only.
+     * @param studentId ID of the student
+     * @return average grade or -1 if no core grades
+     */
     public double calculateCoreAverage(int studentId) {
         double total = 0;
         int count = 0;
@@ -118,6 +146,12 @@ public class GradeManager {
         return count == 0 ? -1 : total / count;
     }
 
+    // ------------------ CALCULATE ELECTIVE AVERAGE ------------------
+    /**
+     * Calculates average grade for elective subjects only.
+     * @param studentId ID of the student
+     * @return average grade or -1 if no elective grades
+     */
     public double calculateElectiveAverage(int studentId) {
         double total = 0;
         int count = 0;
@@ -134,6 +168,12 @@ public class GradeManager {
         return count == 0 ? -1 : total / count;
     }
 
+    // ------------------ CALCULATE OVERALL AVERAGE ------------------
+    /**
+     * Calculates overall average for all subjects.
+     * @param studentId ID of the student
+     * @return average grade or -1 if no grades
+     */
     public double calculateOverallAverage(int studentId) {
         double total = 0;
         int count = 0;
@@ -149,19 +189,18 @@ public class GradeManager {
         return count == 0 ? -1 : total / count;
     }
 
-//    public String getStatus(double grade) {
-//        if (grade >= 50) {
-//            return "PASS";
-//        } else {
-//            return "FAIL";
-//        }
-//    }
-
-
+    // ------------------ GETTERS ------------------
+    /**
+     * Returns the total number of grades stored.
+     */
     public int getGradeCount() {
         return gradeCount;
     }
 
+    /**
+     * Returns the number of subjects a student has grades for.
+     * @param studentId ID of the student
+     */
     public int getSubjectCountForStudent(int studentId) {
         int count = 0;
         for (int i = 0; i < gradeCount; i++) {
@@ -171,9 +210,4 @@ public class GradeManager {
         }
         return count;
     }
-
-
-
 }
-
-

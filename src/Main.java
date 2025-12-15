@@ -3,28 +3,52 @@ import java.util.Scanner;
 
 public class Main {
 
+    // Scanner for user input
     static Scanner scanner = new Scanner(System.in);
-    static ArrayList<Student> students = new ArrayList<>();
-    static int studentIdCounter = 1000;
-    static ArrayList<Grade> grades = new ArrayList<>();
-    static GradeManager gradeManager = new GradeManager();;
 
+    // List to store all students
+    static ArrayList<Student> students = new ArrayList<>();
+
+    // Counter for generating unique student IDs
+    static int studentIdCounter = 1000;
+
+    // List to store all grades
+    static ArrayList<Grade> grades = new ArrayList<>();
+
+    // Grade manager to handle grade-related operations
+    static GradeManager gradeManager = new GradeManager();
+
+    // Main program entry point
     public static void main(String[] args) {
+
         boolean running = true;
 
+        // Main loop for menu navigation
         while (running) {
-            mainMenu();
+            mainMenu(); // Display main menu
             int choice = scanner.nextInt();
-            scanner.nextLine();
+            scanner.nextLine(); // Consume newline
 
-            if (choice == 5) {
-                running = false;
+            // Menu options
+            if (choice == 1) {
+                addStudent();
+            } else if (choice == 2) {
+                viewStudents();
+            } else if (choice == 3) {
+                recordGrade();
+            } else if (choice == 4) {
+                viewGradeReport();
+            } else if (choice == 5) {
+                running = false; // Exit program
                 System.out.println("Thank you for using grade management system!");
                 System.out.println("Goodbye");
+            } else {
+                System.out.println("Invalid choice. Try again!");
             }
         }
     }
 
+    // ---------------------- MAIN MENU ----------------------
     public static void mainMenu() {
         System.out.println("============================================");
         System.out.println("||    STUDENT GRADE MANAGEMENT SYSTEM     ||");
@@ -39,9 +63,11 @@ public class Main {
         System.out.print("Enter choice: ");
     }
 
+    // ---------------------- ADD STUDENT ----------------------
     public static void addStudent() {
         System.out.println("-------------- ADD STUDENT ----------------");
 
+        // Get student details from user
         System.out.print("Enter student name: ");
         String name = scanner.nextLine();
 
@@ -55,6 +81,7 @@ public class Main {
         System.out.print("Enter student phone: ");
         String phone = scanner.nextLine();
 
+        // Select student type: Regular or Honors
         System.out.println("Select student type:");
         System.out.println("1. Regular Student");
         System.out.println("2. Honors Student");
@@ -62,8 +89,10 @@ public class Main {
         int type = scanner.nextInt();
         scanner.nextLine();
 
+        // Assign unique ID to student
         int id = studentIdCounter++;
 
+        // Add student based on type
         if (type == 1) {
             students.add(new RegularStudent(id, name, age, email, phone));
             System.out.println("Regular student added!");
@@ -75,20 +104,23 @@ public class Main {
         System.out.println("--------------------------------------------");
     }
 
+    // ---------------------- VIEW STUDENTS ----------------------
     public static void viewStudents() {
         if (students.isEmpty()) {
             System.out.println("\nNo students have been added to the system.\n");
             return;
         }
 
+        // Header for student list
         System.out.println("\nSTUDENT LIST");
         System.out.printf("%-6s %-20s %-10s %-12s %-10s %-10s %-12s\n",
                 "ID", "NAME", "TYPE", "AVG GRADE", "SUBJECTS", "STATUS", "PASSING GRADE");
         System.out.println("----------------------------------------------------------------------------------------");
 
-        double totalGrades = 0;
-        int countGrades = 0;
+        double totalGrades = 0; // Sum of averages
+        int countGrades = 0;    // Number of students with grades
 
+        // Display first 5 students or all if less
         int displayCount = Math.min(students.size(), 5);
         for (int i = 0; i < displayCount; i++) {
             Student s = students.get(i);
@@ -99,16 +131,18 @@ public class Main {
                 countGrades++;
             }
 
+            // Print student info in formatted table
             System.out.printf("%-6d %-20s %-10s %-12.2f %-10d %-10s %-12d\n",
                     s.id,
                     s.name,
                     s.getType(),
                     avg,
-//                    s.getEnrolledSubjects(),
+                    s.getEnrolledSubjects(),
                     s.getStatus(),
                     s.getPassingGrade()
             );
 
+            // Special check for Honors eligibility
             if (s instanceof HonorsStudent && avg >= s.getPassingGrade()) {
                 System.out.println("Honors Eligible!");
             }
@@ -127,15 +161,17 @@ public class Main {
         System.out.println();
     }
 
+    // ---------------------- RECORD GRADE ----------------------
     public static void recordGrade() {
         System.out.println("------------- RECORD GRADE ----------------");
 
+        // Get student ID for grade
         System.out.print("Enter student ID: ");
         int id = scanner.nextInt();
         scanner.nextLine();
 
+        // Find student object
         Student selected = null;
-
         for (Student s : students) {
             if (s.id == id) {
                 selected = s;
@@ -148,6 +184,7 @@ public class Main {
             return;
         }
 
+        // Select subject type: Core or Elective
         System.out.println("Select subject category:");
         System.out.println("1. Core Subject");
         System.out.println("2. Elective Subject");
@@ -157,7 +194,7 @@ public class Main {
 
         Subject subject = null;
 
-        if (type == 1) {
+        if (type == 1) { // Core subjects
             System.out.println("Select Core Subject:");
             System.out.println("1. Mathematics");
             System.out.println("2. English");
@@ -173,7 +210,7 @@ public class Main {
                 return;
             }
 
-        } else if (type == 2) {
+        } else if (type == 2) { // Elective subjects
             System.out.println("Select Elective Subject:");
             System.out.println("1. Music");
             System.out.println("2. Art");
@@ -190,28 +227,32 @@ public class Main {
             }
         }
 
+        // Enter grade value
         System.out.print("Enter grade (0 - 100): ");
         double g = scanner.nextDouble();
         scanner.nextLine();
 
+        // Validate grade range
         if (g < 0 || g > 100) {
             System.out.println("Invalid grade! Must be between 0 and 100.");
             return;
         }
 
+        // Create grade object and add to grade manager
         Grade newGrade = new Grade(id, subject, g);
-
         gradeManager.addGrade(newGrade);
 
         System.out.println("\n✔ Grade recorded successfully!");
         newGrade.displayGradeDetails();
     }
 
+    // ---------------------- VIEW GRADE REPORT ----------------------
     public static void viewGradeReport() {
         System.out.print("Enter student ID: ");
         int id = scanner.nextInt();
         scanner.nextLine();
 
+        // Delegate grade report display to GradeManager
         gradeManager.viewGradeByStudent(id);
     }
 }
