@@ -3,9 +3,11 @@ import java.util.Scanner;
 
 public class Main {
 
+    static Scanner scanner = new Scanner(System.in);
     static ArrayList<Student> students = new ArrayList<>();
     static int studentIdCounter = 1000;
-    static Scanner scanner = new Scanner(System.in);
+    static ArrayList<Grade> grades = new ArrayList<>();
+    static GradeManager gradeManager = new GradeManager();;
 
     public static void main(String[] args) {
         boolean running = true;
@@ -123,5 +125,93 @@ public class Main {
         }
 
         System.out.println();
+    }
+
+    public static void recordGrade() {
+        System.out.println("------------- RECORD GRADE ----------------");
+
+        System.out.print("Enter student ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        Student selected = null;
+
+        for (Student s : students) {
+            if (s.id == id) {
+                selected = s;
+                break;
+            }
+        }
+
+        if (selected == null) {
+            System.out.println("Student not found!");
+            return;
+        }
+
+        System.out.println("Select subject category:");
+        System.out.println("1. Core Subject");
+        System.out.println("2. Elective Subject");
+        System.out.print("Enter choice: ");
+        int type = scanner.nextInt();
+        scanner.nextLine();
+
+        Subject subject = null;
+
+        if (type == 1) {
+            System.out.println("Select Core Subject:");
+            System.out.println("1. Mathematics");
+            System.out.println("2. English");
+            System.out.println("3. Science");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            if (choice == 1) subject = new CoreSubject("Mathematics", "C-MATH");
+            else if (choice == 2) subject = new CoreSubject("English", "C-ENG");
+            else if (choice == 3) subject = new CoreSubject("Science", "C-SCI");
+            else {
+                System.out.println("Invalid subject!");
+                return;
+            }
+
+        } else if (type == 2) {
+            System.out.println("Select Elective Subject:");
+            System.out.println("1. Music");
+            System.out.println("2. Art");
+            System.out.println("3. Physical Education");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            if (choice == 1) subject = new ElectiveSubject("Music", "E-MUS");
+            else if (choice == 2) subject = new ElectiveSubject("Art", "E-ART");
+            else if (choice == 3) subject = new ElectiveSubject("Physical Education", "E-PE");
+            else {
+                System.out.println("Invalid subject!");
+                return;
+            }
+        }
+
+        System.out.print("Enter grade (0 - 100): ");
+        double g = scanner.nextDouble();
+        scanner.nextLine();
+
+        if (g < 0 || g > 100) {
+            System.out.println("Invalid grade! Must be between 0 and 100.");
+            return;
+        }
+
+        Grade newGrade = new Grade(id, subject, g);
+
+        gradeManager.addGrade(newGrade);
+
+        System.out.println("\n✔ Grade recorded successfully!");
+        newGrade.displayGradeDetails();
+    }
+
+    public static void viewGradeReport() {
+        System.out.print("Enter student ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        gradeManager.viewGradeByStudent(id);
     }
 }
