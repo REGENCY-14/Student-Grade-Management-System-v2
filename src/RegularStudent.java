@@ -1,4 +1,21 @@
-package PACKAGE_NAME;
+public class RegularStudent extends Student {
 
-public class RegularStudent {
+    public RegularStudent(int id, String name, int age, String email, String phone) {
+        super(id, name, age, email, phone);
+    }
+
+    @Override
+    public String getType() {
+        return "Regular";
+    }
+
+    @Override
+    public int getPassingGrade() {
+        return (int) 50.0;
+    }
+
+
+
+
+
 }

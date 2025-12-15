@@ -1,7 +1,10 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
+    static ArrayList<Student> students = new ArrayList<>();
+    static int studentIdCounter = 1000;
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
