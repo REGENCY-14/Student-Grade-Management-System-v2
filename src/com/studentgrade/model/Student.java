@@ -1,3 +1,7 @@
+package com.studentgrade.model;
+
+import com.studentgrade.manager.GradeManager;
+
 /**
  * Base class representing a generic student.
  * This class stores basic student information and provides methods
@@ -6,13 +10,16 @@
 public class Student {
 
     // ------------------ FIELDS ------------------
-    protected int id;             // Unique student ID
-    protected String name;        // Student's full name
-    protected int age;            // Student's age
-    protected String email;       // Student's email address
-    protected String phone;       // Student's phone number
+    public int id;             // Unique student ID
+    public String name;        // Student's full name
+    public int age;            // Student's age
+    public String email;       // Student's email address
+    public String phone;       // Student's phone number
     protected String status = "Active"; // Student's status, default is Active
     protected double averageGrade;      // Average grade across all subjects
+
+    // Reference to GradeManager (injected)
+    protected GradeManager gradeManager;
 
     // ------------------ CONSTRUCTOR ------------------
     /**
@@ -30,6 +37,11 @@ public class Student {
         this.email = email;
         this.phone = phone;
         this.averageGrade = 0; // Initial average grade
+    }
+
+    // Setter for GradeManager (dependency injection)
+    public void setGradeManager(GradeManager gradeManager) {
+        this.gradeManager = gradeManager;
     }
 
     // ------------------ METHODS ------------------
@@ -66,19 +78,11 @@ public class Student {
     }
 
     /**
-     * Placeholder method to compute the type dynamically.
-     * Can be implemented by subclasses if needed.
-     */
-    public String getComputedType() {
-        return null;
-    }
-
-    /**
      * Returns the student's status (Active/Inactive).
      * Can be overridden by subclasses if needed.
      */
     public String getStatus() {
-        return null;
+        return status;
     }
 
     /**
@@ -86,6 +90,9 @@ public class Student {
      * Retrieves the count from the GradeManager.
      */
     public int getEnrolledSubjects() {
-        return Main.gradeManager.getSubjectCountForStudent(this.id);
+        if (gradeManager != null) {
+            return gradeManager.getSubjectCountForStudent(this.id);
+        }
+        return 0;
     }
 }

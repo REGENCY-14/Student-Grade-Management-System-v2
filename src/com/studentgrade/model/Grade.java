@@ -1,3 +1,5 @@
+package com.studentgrade.model;
+
 import java.time.LocalDate;
 
 /**
@@ -23,8 +25,12 @@ public class Grade {
      * @param studentId ID of the student
      * @param subject Subject for which the grade is recorded
      * @param grade Numeric grade value (0-100)
+     * @throws IllegalArgumentException if grade is not between 0 and 100
      */
     public Grade(int studentId, Subject subject, double grade) {
+        if (grade < 0 || grade > 100) {
+            throw new IllegalArgumentException("Grade must be between 0 and 100");
+        }
         this.gradeId = gradeCounter++; // Assign unique grade ID
         this.studentId = studentId;
         this.subject = subject;

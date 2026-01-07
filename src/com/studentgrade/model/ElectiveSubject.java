@@ -1,3 +1,5 @@
+package com.studentgrade.model;
+
 /**
  * Represents an Elective Subject in the system.
  * Elective subjects are optional and can be chosen by the student.

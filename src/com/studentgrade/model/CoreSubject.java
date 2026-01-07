@@ -1,3 +1,5 @@
+package com.studentgrade.model;
+
 /**
  * Represents a Core Subject in the system.
  * Core subjects are mandatory and part of the student's core curriculum.

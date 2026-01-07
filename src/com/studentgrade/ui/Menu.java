@@ -1,55 +1,86 @@
+package com.studentgrade.ui;
+
+import com.studentgrade.model.*;
+import com.studentgrade.manager.GradeManager;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Main {
+/**
+ * Menu class handles all user interactions and menu navigation.
+ * Separated from Main for better separation of concerns.
+ */
+public class Menu {
 
     // Scanner for user input
-    static Scanner scanner = new Scanner(System.in);
+    private Scanner scanner;
 
     // List to store all students
-    static ArrayList<Student> students = new ArrayList<>();
+    private ArrayList<Student> students;
 
     // Counter for generating unique student IDs
-    static int studentIdCounter = 1000;
-
-    // List to store all grades
-    static ArrayList<Grade> grades = new ArrayList<>();
+    private int studentIdCounter;
 
     // Grade manager to handle grade-related operations
-    static GradeManager gradeManager = new GradeManager();
+    private GradeManager gradeManager;
 
-    // Main program entry point
-    public static void main(String[] args) {
+    // Constructor - initializes all dependencies
+    public Menu(Scanner scanner, ArrayList<Student> students, 
+                int initialStudentId, GradeManager gradeManager) {
+        this.scanner = scanner;
+        this.students = students;
+        this.studentIdCounter = initialStudentId;
+        this.gradeManager = gradeManager;
+        
+        // Set grade manager reference for all students
+        for (Student student : students) {
+            student.setGradeManager(gradeManager);
+        }
+    }
 
+    // ---------------------- MAIN MENU LOOP ----------------------
+    /**
+     * Main menu loop that runs until user chooses to exit.
+     * Handles all menu navigation and operations.
+     */
+    public void start() {
         boolean running = true;
 
         // Main loop for menu navigation
         while (running) {
-            mainMenu(); // Display main menu
+            displayMainMenu();
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
 
             // Menu options
-            if (choice == 1) {
-                addStudent();
-            } else if (choice == 2) {
-                viewStudents();
-            } else if (choice == 3) {
-                recordGrade();
-            } else if (choice == 4) {
-                viewGradeReport();
-            } else if (choice == 5) {
-                running = false; // Exit program
-                System.out.println("Thank you for using grade management system!");
-                System.out.println("Goodbye");
-            } else {
-                System.out.println("Invalid choice. Try again!");
+            switch (choice) {
+                case 1:
+                    addStudent();
+                    break;
+                case 2:
+                    viewStudents();
+                    break;
+                case 3:
+                    recordGrade();
+                    break;
+                case 4:
+                    viewGradeReport();
+                    break;
+                case 5:
+                    running = false; // Exit program
+                    System.out.println("Thank you for using grade management system!");
+                    System.out.println("Goodbye");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Try again!");
             }
         }
     }
 
     // ---------------------- MAIN MENU ----------------------
-    public static void mainMenu() {
+    /**
+     * Displays the main menu options.
+     */
+    private void displayMainMenu() {
         System.out.println("============================================");
         System.out.println("||    STUDENT GRADE MANAGEMENT SYSTEM     ||");
         System.out.println("============================================");
@@ -64,7 +95,11 @@ public class Main {
     }
 
     // ---------------------- ADD STUDENT ----------------------
-    public static void addStudent() {
+    /**
+     * Prompts user to add a new student to the system.
+     * Allows selection of student type (Regular or Honors).
+     */
+    private void addStudent() {
         System.out.println("-------------- ADD STUDENT ----------------");
 
         // Get student details from user
@@ -94,18 +129,27 @@ public class Main {
 
         // Add student based on type
         if (type == 1) {
-            students.add(new RegularStudent(id, name, age, email, phone));
+            Student student = new RegularStudent(id, name, age, email, phone);
+            student.setGradeManager(gradeManager);
+            students.add(student);
             System.out.println("Regular student added!");
-        } else {
-            students.add(new HonorsStudent(id, name, age, email, phone));
+        } else if (type == 2) {
+            Student student = new HonorsStudent(id, name, age, email, phone);
+            student.setGradeManager(gradeManager);
+            students.add(student);
             System.out.println("Honors student added!");
+        } else {
+            System.out.println("Invalid choice!");
         }
 
         System.out.println("--------------------------------------------");
     }
 
     // ---------------------- VIEW STUDENTS ----------------------
-    public static void viewStudents() {
+    /**
+     * Displays all students in the system with their details and statistics.
+     */
+    private void viewStudents() {
         if (students.isEmpty()) {
             System.out.println("\nNo students have been added to the system.\n");
             return;
@@ -162,7 +206,10 @@ public class Main {
     }
 
     // ---------------------- RECORD GRADE ----------------------
-    public static void recordGrade() {
+    /**
+     * Allows user to record a grade for a student in a subject.
+     */
+    private void recordGrade() {
         System.out.println("------------- RECORD GRADE ----------------");
 
         // Get student ID for grade
@@ -247,7 +294,10 @@ public class Main {
     }
 
     // ---------------------- VIEW GRADE REPORT ----------------------
-    public static void viewGradeReport() {
+    /**
+     * Displays grade report for a specific student.
+     */
+    private void viewGradeReport() {
         System.out.print("Enter student ID: ");
         int id = scanner.nextInt();
         scanner.nextLine();

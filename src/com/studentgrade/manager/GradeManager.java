@@ -1,11 +1,33 @@
+package com.studentgrade.manager;
+
+import com.studentgrade.model.Grade;
+import com.studentgrade.model.Student;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class GradeManager {
 
     // Array to store up to 200 grades
-    private Grade[] grades = new Grade[200];
+    private final Grade[] grades = new Grade[200];
     private int gradeCount = 0; // Number of grades currently stored
+    
+    // Reference to student list
+    private ArrayList<Student> students;
+
+    // Constructor with dependency injection
+    public GradeManager(ArrayList<Student> students) {
+        this.students = students;
+    }
+
+    // Alternative constructor for backwards compatibility
+    public GradeManager() {
+        this.students = new ArrayList<>();
+    }
+
+    // Setter for students list
+    public void setStudents(ArrayList<Student> students) {
+        this.students = students;
+    }
 
     // ------------------ ADD GRADE ------------------
     /**
@@ -48,12 +70,12 @@ public class GradeManager {
 
     // ------------------ FIND STUDENT BY ID ------------------
     /**
-     * Finds a student in the main student list using student ID.
+     * Finds a student in the student list using student ID.
      * @param studentId ID to search
      * @return Student object if found, null otherwise
      */
     private Student findStudentById(int studentId) {
-        for (Student s : Main.students) {
+        for (Student s : students) {
             if (s.id == studentId) return s;
         }
         return null;

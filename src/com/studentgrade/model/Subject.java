@@ -1,3 +1,5 @@
+package com.studentgrade.model;
+
 /**
  * Abstract base class representing a Subject.
  * Defines the common properties and behaviors for all subjects.
@@ -6,8 +8,8 @@
 public abstract class Subject {
 
     // ------------------ FIELDS ------------------
-    private String subjectName; // Name of the subject (e.g., Mathematics, Music)
-    private String subjectCode; // Unique code for the subject (e.g., C-MATH, E-ART)
+    private final String subjectName; // Name of the subject (e.g., Mathematics, Music)
+    private final String subjectCode; // Unique code for the subject (e.g., C-MATH, E-ART)
 
     // ------------------ CONSTRUCTOR ------------------
     /**
